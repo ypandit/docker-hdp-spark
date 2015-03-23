@@ -9,7 +9,7 @@ ADD scripts/* /tmp/
 RUN yum -y update; yum clean all
 
 # Install prerequisites
-RUN yum install -y curl which tar sudo htop openssh-server openssh-clients automake autoconf gcc-c++ m4 perl git libtool libevent-devel zlib-devel openssl-devel openssl wget git mysql-server mysql mysql-connector-java python-devel mysql-devel sqlite-devel libxml2-devel libxslt-devel; yum update -y libselinux
+RUN yum install -y curl which tar sudo htop openssh-server openssh-clients automake autoconf gcc-c++ m4 perl git libtool libevent-devel zlib-devel openssl-devel openssl wget git mysql-server mysql mysql-connector-java python-devel mysql-devel sqlite-devel libxml2-devel libxslt-devel epel-release openldap-clients openldap-servers vim; yum update -y libselinux; yum -y update; yum -y install nginx; yum clean all
 RUN service mysqld start; chkconfig mysqld on
 
 # Passwordless SSH
@@ -38,7 +38,7 @@ ENV HADOOP_HOME /usr/lib/hadoop
 ENV HADOOP_PREFIX /usr/lib/hadoop
 ENV HADOOP_LOG_DIR /var/log/hadoop
 ENV HIVE_CONF_DIR /etc/hive/conf
-ENV SPARK_HOME /usr/lib/spark/
+ENV SPARK_HOME /usr/lib/spark/1.3.0
 
 # Install maven, spark, thrift, protobuf
 RUN sh /tmp/install.sh

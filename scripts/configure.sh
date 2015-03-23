@@ -37,13 +37,12 @@ configure_hadoop() {
 
 configure_hive_metastore() {
   echo "Configuring hive-metastore for hive-0.13.0"
-  service mysqld restart
+  service mysqld start
 
-  mysql -uroot -e "USE mysql; CREATE DATABASE IF NOT EXISTS hive; GRANT ALL ON `hive`.* TO 'hive'@'localhost' IDENTIFIED BY 'hive'; FLUSH PRIVILEGES;"
+  mysql -uroot -e "USE mysql; CREATE DATABASE IF NOT EXISTS hive; GRANT ALL ON hive.* TO 'hive'@'localhost' IDENTIFIED BY 'hive'; FLUSH PRIVILEGES;"
 
-  hive_metastore_sql="/usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.13.0.mysql.sql"
-  if [ -f $hive_metastore_sql ]; then
-    mysql -uhive -D hive -phive < $hive_metastore_sql
+  if [ -f /usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.13.0.mysql.sql ]; then
+    mysql -uhive -D hive -phive < /usr/lib/hive/scripts/metastore/upgrade/mysql/hive-schema-0.13.0.mysql.sql
   else
     echo "hive may not have been installed"
     exit 1

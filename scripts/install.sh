@@ -9,26 +9,48 @@ install_thrift() {
 
 install_protobuf() {
   echo "Installing protobuf-2.6.0"
-  cd /tmp; wget https://github.com/google/protobuf/releases/download/v2.6.0/protobuf-2.6.0.tar.gz; tar -zxf protobuf-2.6.0.tar.gz
+  cd /tmp; wget https://github.com/google/protobuf/releases/download/v2.6.0/protobuf-2.6.0.tar.gz; tar -zxvf protobuf-2.6.0.tar.gz
   cd /tmp/protobuf-2.6.0; ./autogen.sh; ./configure --prefix=/usr; make; make check; make install
   echo "Installation of protobuf-2.6.0 complete"
 }
 
-build_spark() {
+build_spark_13() {
   echo "Building Apache Spark from source"
   export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
   cp /tmp/make-distribution.sh /tmp/spark/
-  cd /tmp/spark; ./make-distribution.sh --tgz --name radx --mvn /usr/local/maven/bin/mvn -DskipTests -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -Phive -Phive-thriftserver
-  cd /tmp/spark; tar zxvf spark-*.tgz; mv spark-* /usr/lib/spark
+  cd /tmp/spark
+  ./make-distribution.sh --tgz --name radx --mvn /usr/local/maven/bin/mvn -DskipTests -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -Phive -Phive-thriftserver
+  cd /tmp/spark && tar zxvf spark-*.tgz -C /usr/lib/spark && mv /usr/lib/spark/spark-* /usr/lib/spark/1.3.0
   echo "Building of Apache Spark 1.3.0 complete"
 }
 
+build_spark_12() {
+  echo "Building Apache Spark from source"
+  export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
+  cp /tmp/make-distribution.sh /tmp/spark/
+  cd /tmp/spark
+  ./make-distribution.sh --tgz --name radx --mvn /usr/local/maven/bin/mvn -DskipTests -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -Phive -Phive-thriftserver
+  cd /tmp/spark && tar zxvf spark-*.tgz -C /usr/lib/spark && mv /usr/lib/spark/spark-* /usr/lib/spark/1.2.1
+  echo "Building of Apache Spark 1.2.1 complete"
+}
+
 install_spark() {
+  mkdir /usr/lib/spark
   echo "Installing Apache Spark release 1.3.0"
-  cd /tmp; wget http://supergsego.com/apache/spark/spark-1.3.0/spark-1.3.0.tgz;
-  cd /tmp; tar zxf spark-1.3.0.tgz; mv spark-1.3.0 spark
-  build_spark
+
+  # CHECKOUT_COMMIT_REV="9a151ce58b3e756f205c9f3ebbbf3ab0ba5b33fd"
+  # PR_COMMIT_REV="8f471a66db0571a76a21c0d93312197fee16174a"
+  # cd /tmp; git clone https://github.com/apache/spark.git; git checkout -b custom-spark $CHECKOUT_COMMIT_REV; git cherry-pick $PR_COMMIT_REV
+
+  cd /tmp; wget http://supergsego.com/apache/spark/spark-1.3.0/spark-1.3.0.tgz; tar zxvf spark-1.3.0.tgz; mv spark-1.3.0 spark
+  build_spark_13
   echo "Installation of Apache Spark 1.3.0 complete"
+  rm -rf /tmp/spark-1.3.0 /tmp/spark
+
+  echo "Installing Apache Spark release 1.2.1"
+  cd /tmp; wget http://www.webhostingjams.com/mirror/apache/spark/spark-1.2.1/spark-1.2.1.tgz; tar zxvf spark-1.2.1.tgz; mv spark-1.2.1 spark
+  build_spark_12
+  echo "Installation of Apache Spark 1.2.1 complete"
 }
 
 install_maven() {
@@ -48,7 +70,7 @@ install_maven() {
 cleanup() {
   rm -rf /tmp/maven.tgz /tmp/apache-maven-*
   rm -rf /tmp/protobuf-2.6.0 /tmp/protobuf-2.6.0.tar.gz
-  rm -rf /tmp/spark /tmp/spark-1.3.0.tgz /tmp/make-distribution.sh
+  rm -rf /tmp/spark /tmp/spark-1.3.0.tgz /tmp/make-distribution.sh /tmp/spark-1.2.1.tgz
   rm -rf /tmp/thrift-0.9.0 /tmp/thrift-0.9.0.tar.gz
 }
 
