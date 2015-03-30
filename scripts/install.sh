@@ -24,16 +24,6 @@ build_spark_13() {
   echo "Building of Apache Spark 1.3.0 complete"
 }
 
-build_spark_12() {
-  echo "Building Apache Spark from source"
-  export MAVEN_OPTS="-Xmx2g -XX:MaxPermSize=512M -XX:ReservedCodeCacheSize=512m"
-  cp /tmp/make-distribution.sh /tmp/spark/
-  cd /tmp/spark
-  ./make-distribution.sh --tgz --name radx --mvn /usr/local/maven/bin/mvn -DskipTests -Pyarn -Phadoop-2.4 -Dhadoop.version=2.4.0 -Phive -Phive-thriftserver
-  cd /tmp/spark && tar zxvf spark-*.tgz -C /usr/lib/spark && mv /usr/lib/spark/spark-* /usr/lib/spark/1.2.1
-  echo "Building of Apache Spark 1.2.1 complete"
-}
-
 install_spark() {
   mkdir /usr/lib/spark
   echo "Installing Apache Spark release 1.3.0"
@@ -47,10 +37,13 @@ install_spark() {
   echo "Installation of Apache Spark 1.3.0 complete"
   rm -rf /tmp/spark-1.3.0 /tmp/spark
 
-  echo "Installing Apache Spark release 1.2.1"
-  cd /tmp; wget http://www.webhostingjams.com/mirror/apache/spark/spark-1.2.1/spark-1.2.1.tgz; tar zxvf spark-1.2.1.tgz; mv spark-1.2.1 spark
-  build_spark_12
+  echo "Installing Apache Spark release 1.2.1 pre-built for Hadoop-2.4"
+  cd /tmp; wget http://mirror.symnds.com/software/Apache/spark/spark-1.2.1/spark-1.2.1-bin-hadoop2.4.tgz; tar zxvf spark-1.2.1-bin-hadoop2.4.tgz; mv spark-1.2.1-bin-hadoop2.4 /usr/lib/spark/1.2.1
   echo "Installation of Apache Spark 1.2.1 complete"
+
+  echo "Installing Apache Spark release 1.1.0 pre-built for Hadoop-2.4"
+  cd /tmp; wget http://d3kbcqa49mib13.cloudfront.net/spark-1.1.0-bin-hadoop2.4.tgz; tar zxvf spark-1.1.0-bin-hadoop2.4.tgz; mv spark-1.1.0-bin-hadoop2.4 /usr/lib/spark/1.1.0
+  echo "Installation of Apache Spark 1.1.0 complete"
 }
 
 install_maven() {
@@ -70,7 +63,7 @@ install_maven() {
 cleanup() {
   rm -rf /tmp/maven.tgz /tmp/apache-maven-*
   rm -rf /tmp/protobuf-2.6.0 /tmp/protobuf-2.6.0.tar.gz
-  rm -rf /tmp/spark /tmp/spark-1.3.0.tgz /tmp/make-distribution.sh /tmp/spark-1.2.1.tgz
+  rm -rf /tmp/spark /tmp/spark-1.3.0.tgz /tmp/make-distribution.sh /tmp/spark-1.2.1-bin-hadoop2.4.tgz /tmp/spark-1.1.0-bin-hadoop2.4.tgz
   rm -rf /tmp/thrift-0.9.0 /tmp/thrift-0.9.0.tar.gz
 }
 

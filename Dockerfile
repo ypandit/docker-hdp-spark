@@ -46,9 +46,6 @@ RUN sh /tmp/install.sh
 # Configure hadoop, hive-metastore
 RUN sh /tmp/configure.sh
 
-# Format Namenode
-RUN /usr/lib/hadoop-hdfs/bin/hdfs namenode -format
-
 ADD bootstrap.sh /etc/bootstrap.sh
 RUN chown root:root /etc/bootstrap.sh; chmod 700 /etc/bootstrap.sh
 
