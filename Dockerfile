@@ -38,7 +38,7 @@ ENV HADOOP_HOME /usr/lib/hadoop
 ENV HADOOP_PREFIX /usr/lib/hadoop
 ENV HADOOP_LOG_DIR /var/log/hadoop
 ENV HIVE_CONF_DIR /etc/hive/conf
-ENV SPARK_HOME /usr/lib/spark/1.3.0
+ENV SPARK_HOME /usr/lib/spark/1.3.1
 
 # Install maven, spark, thrift, protobuf
 RUN sh /tmp/install.sh
